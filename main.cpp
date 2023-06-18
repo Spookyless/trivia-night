@@ -29,7 +29,25 @@ int main() {
         std::string menuAnswer = menuInquirer.answer("menu");
 
         if(menuAnswer == "Start a new game") {
+            system(CLEAR);
 
+            auto startGameInquirer = alx::Inquirer();
+            startGameInquirer.add_question({"startGame", "Are we good to go?", alx::Type::yesNo});
+
+            std::cout << "Starting game with following parameters:" << std::endl;
+            std::cout << std::endl;
+
+            trivia.printCurrentGameParameters();
+
+            std::cout << std::endl;
+
+            startGameInquirer.ask();
+
+            std::string startGameAnswer = startGameInquirer.answer("startGame");
+
+            if(startGameAnswer == "yes") {
+                // TODO: Start game
+            }
         } else if(menuAnswer == "Game settings") {
             while(true) {
                 system(CLEAR);
