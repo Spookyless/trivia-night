@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 find_package(CURL REQUIRED)
 
-add_executable(trivia_night main.cpp)
+add_executable(trivia_night main.cpp Trivia.cpp)
 
 add_compile_options(-static-libstdc++ -static-libstdc)
 
