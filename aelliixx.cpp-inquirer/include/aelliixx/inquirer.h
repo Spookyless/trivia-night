@@ -32,14 +32,17 @@
 #include <lamarrr/chalk.h>
 
 #if __linux__
+#define VK_DOWN 66
+#define VK_UP 65
+#define VK_LEFT 68
+#define VK_RIGHT 67
 #else
 #include <conio.h>
-#include <windows.h>
 
-#define WK_DOWN 80
-#define WK_UP 72
-#define WK_LEFT 75
-#define WK_RIGHT 77
+#define VK_DOWN 80
+#define VK_UP 72
+#define VK_LEFT 75
+#define VK_RIGHT 77
 #endif
 
 namespace alx {
@@ -184,11 +187,12 @@ namespace alx {
 
                         while (true) {
                             key = getch();
-                            if (key == 89 || key == 121 || key == 37) {
+
+                            if (key == 89 || key == 121 || key == VK_LEFT) {
                                 position = true;
                                 erase_lines(2);
                                 printQuestion(yes);
-                            } else if (key == 78 || key == 110 || key == 39) {
+                            } else if (key == 78 || key == 110 || VK_RIGHT) {
                                 position = false;
                                 erase_lines(2);
                                 printQuestion(no);
@@ -220,13 +224,13 @@ namespace alx {
 
                         while (true) {
                             key = getch();
-                            if (key == 66 || key == 's') {
+                            if (key == VK_DOWN || key == 's') {
                                 selectedIndex = wrap_int((int) selectedIndex + 1, 0, q.options.size() - 1);
                                 erase_lines(q.options.size() + 2);
                                 printQuestion();
                                 printOptions();
 //                            } else if (key == 65 || key == VK_UP || key == WK_UP) {
-                            } else if (key == 65 || key == 'w') {
+                            } else if (key == VK_UP || key == 'w') {
                                 selectedIndex = wrap_int((int) selectedIndex - 1, 0, q.options.size() - 1);
                                 erase_lines(q.options.size() + 2);
                                 printQuestion();
@@ -306,12 +310,15 @@ namespace alx {
         static int getch() {
             int c;
 
+#ifdef __linux__
             system("stty raw");    // Raw input - wait for only a single keystroke
             system("stty -echo");  // Echo off
             c = getchar();
             system("stty cooked"); // Cooked input - reset
             system("stty echo");   // Echo on - Reset
-
+#else
+            c = ::getch();
+#endif
             return c;
         }
 
