@@ -3,6 +3,7 @@
 
 #include <string>
 #include <nlohmann/json.hpp>
+#include "include/GameResults.h"
 
 const std::string API_BASE = "https://opentdb.com/";
 const std::string  API_QUESTION = "api.php";
@@ -25,11 +26,15 @@ public:
     void setCurrentQuestionAmount(int questionAmount);
     int getCurrentQuestionAmount() const;
     void printCurrentGameParameters() const;
+    void startGame(GameResults& gameResult);
 
+    static std::string colorDifficulty(const std::string& difficultyName);
 private:
     bool fetchCategories();
     bool fetchCurrentCategoryInfo();
     void resetCurrentCategoryInfo();
+    int fetchQuestions();
+    void resetQuestions();
 
 public:
     static std::vector<std::string> difficulties;
@@ -37,6 +42,7 @@ public:
 private:
     json _categories = nullptr;
     json _currentCategoryInfo = nullptr;
+    json _questions = nullptr;
     int _currentCategoryId = -1;
     std::string _currentCategoryName = "Any";
     std::string _currentDifficultyName = Trivia::difficulties[0];

@@ -30,20 +30,7 @@
 #include <variant>
 #include <cassert>
 #include <lamarrr/chalk.h>
-
-#if __linux__
-#define VK_DOWN 66
-#define VK_UP 65
-#define VK_LEFT 68
-#define VK_RIGHT 67
-#else
-#include <conio.h>
-
-#define VK_DOWN 80
-#define VK_UP 72
-#define VK_LEFT 75
-#define VK_RIGHT 77
-#endif
+#include "os_dependent.h"
 
 namespace alx {
     class Inquirer;
@@ -186,7 +173,7 @@ namespace alx {
                         bool position = true;
 
                         while (true) {
-                            key = getch();
+                            key = OSDEP::getch();
 
                             if (key == 89 || key == 121 || key == VK_LEFT) {
                                 position = true;
@@ -223,7 +210,7 @@ namespace alx {
                         printOptions();
 
                         while (true) {
-                            key = getch();
+                            key = OSDEP::getch();
                             if (key == VK_DOWN || key == 's') {
                                 selectedIndex = wrap_int((int) selectedIndex + 1, 0, q.options.size() - 1);
                                 erase_lines(q.options.size() + 2);
@@ -305,24 +292,6 @@ namespace alx {
 
             return wrap;
         }
-
-        // This function should return the keystroke without allowing it to echo on screen
-        static int getch() {
-            int c;
-
-#ifdef __linux__
-            system("stty raw");    // Raw input - wait for only a single keystroke
-            system("stty -echo");  // Echo off
-            c = getchar();
-            system("stty cooked"); // Cooked input - reset
-            system("stty echo");   // Echo on - Reset
-#else
-            c = ::getch();
-#endif
-            return c;
-        }
-
     };
-
 }
 #endif //CPP_INQUIRER_SRC_INQUIRER_H
