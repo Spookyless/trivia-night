@@ -2,82 +2,91 @@
 #include "Trivia.h"
 #include <lamarrr/chalk.h>
 #include <aelliixx/inquirer.h>
+#include <cstdlib>
+
+#ifdef __linux__
+#define CLEAR "clear"
+#else
+#define CLEAR "cls"
+#endif
 
 int main() {
     Trivia trivia;
 
-    std::cout << chalk::fmt::Bold("Hello") << std::endl;
-
-//    system("cls");
-
-    std::cout << "Welcome to da game!" << std::endl;
-
     while(true) {
-        auto menu_inquirer = alx::Inquirer();
+        system(CLEAR);
 
-        menu_inquirer.add_question({"menu", "What do you want to do?",
-                                    {"Start a new game", "Game settings", "Quit"}});
-        menu_inquirer.ask();
+        std::cout << chalk::fg::BrightCyan("Welcome to Trivia Night!") << std::endl;
+        std::cout << std::endl;
+        std::cout << std::endl;
 
-        std::string menu_answer = menu_inquirer.answer("menu");
+        auto menuInquirer = alx::Inquirer();
 
-        if(menu_answer == "Quit") {
-            return 0;
-        }
+        menuInquirer.add_question({"menu", "What do you want to do?",
+                                   {"Start a new game", "Game settings", "Quit"}});
+        menuInquirer.ask();
 
-        if(menu_answer == "Game settings") {
-//            system("cls");
+        std::string menuAnswer = menuInquirer.answer("menu");
 
+        if(menuAnswer == "Start a new game") {
+
+        } else if(menuAnswer == "Game settings") {
             while(true) {
-                std::cout << "Current category: " << chalk::fg::Cyan(trivia.getCurrentCategoryName());
+                system(CLEAR);
 
-                std::vector<int> currentCategoryCount;
-                bool currentCategoryCountSuccessful = trivia.getCurrentCategoryCount(currentCategoryCount);
-
-                if(currentCategoryCountSuccessful) {
-                    std::cout << " - " << \
-                    currentCategoryCount[0] << " questions " << "(" << \
-                    chalk::fg::BrightGreen(std::to_string(currentCategoryCount[1])) << "/" << \
-                    chalk::fg::BrightYellow(std::to_string(currentCategoryCount[2])) << "/" << \
-                    chalk::fg::BrightRed(std::to_string(currentCategoryCount[3])) << ")" << \
-                    std::endl;
-                } else {
-                    std::cout << std::endl;
-                }
-
+                trivia.printCurrentGameParameters();
                 std::cout << std::endl;
 
-                auto settings_inquirer = alx::Inquirer();
+                auto settingsInquirer = alx::Inquirer();
 
-                settings_inquirer.add_question({"settings", "Choose a parameter to change:",
-                                                { "Change category", "Change difficulty", "Adjust amount", "Return"}});
-                settings_inquirer.ask();
+                settingsInquirer.add_question({"settings", "Choose a parameter to change:",
+                                               { "Change category", "Change difficulty", "Adjust amount", "Return"}});
+                settingsInquirer.ask();
 
-                std::string settings_answer = settings_inquirer.answer("settings");
+                std::string settingsAnswer = settingsInquirer.answer("settings");
 
-                if(settings_answer == "Return") {
+                if(settingsAnswer == "Return") {
                     break;
                 }
 
-                if(settings_answer == "Change category") {
-//                    system("cls");
+                if(settingsAnswer == "Change category") {
+                    auto categoryInquirer = alx::Inquirer();
 
-                    auto category_inquirer = alx::Inquirer();
+                    std::vector<std::string> categoryOptions;
+                    categoryOptions.emplace_back("All");
+                    trivia.getAllCategories(categoryOptions);
 
-                    std::vector<std::string> category_options;
-                    category_options.emplace_back("All");
-                    trivia.getAllCategories(category_options);
+                    categoryInquirer.add_question({"category", "Choose the category:", categoryOptions});
+                    categoryInquirer.ask();
 
-                    category_inquirer.add_question({"category", "Choose the category:", category_options});
-                    category_inquirer.ask();
+                    std::string categoryAnswer = categoryInquirer.answer("category");
 
-                    std::string category_answer = category_inquirer.answer("category");
+                    trivia.setCurrentCategory(categoryAnswer);
+                } else if(settingsAnswer == "Change difficulty") {
+                    auto difficultyInquirer = alx::Inquirer();
 
-                    trivia.setCurrentCategory(category_answer);
+                    difficultyInquirer.add_question({"difficulty", "Choose the difficulty:", Trivia::difficulties});
+                    difficultyInquirer.ask();
+
+                    std::string difficultyAnswer = difficultyInquirer.answer("difficulty");
+
+                    trivia.setCurrentDifficulty(difficultyAnswer);
+                } else if(settingsAnswer == "Adjust amount") {
+                    auto amountInquirer = alx::Inquirer();
+
+                    amountInquirer.add_question({"amount", "Enter the number of questions (1 - 50):", alx::Type::integer});
+                    amountInquirer.ask();
+
+                    int amountAnswer = stoi(amountInquirer.answer("amount"));
+
+                    trivia.setCurrentQuestionAmount(amountAnswer);
                 }
             }
+        } else {
+            return 0;
         }
     }
 
-    return -1;
+    // You should NEVER exit the main function through here
+    return 1;
 }

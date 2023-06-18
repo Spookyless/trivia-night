@@ -208,7 +208,7 @@ constexpr auto Conceal = Format{"\033[8m", "\033[28m"};
 constexpr auto CrossedOut = Format{"\033[9m", "\033[29m"};
 };  // namespace fmt
 
-OStreamStyler ostyler{&std::cout};
+// OStreamStyler ostyler{&std::cout};
 
 };  // namespace chalk
 

@@ -1,6 +1,7 @@
 #include "Trivia.h"
 #include <iostream>
 #include <curl/curl.h>
+#include <lamarrr/chalk.h>
 
 size_t writeFn(void* content, size_t size, size_t nmemb, std::string* output) {
     size_t totalSize = size * nmemb;
@@ -16,6 +17,8 @@ void prepareCurl(CURL* curl) {
 Trivia::Trivia() {
     fetchCategories();
 }
+
+std::vector<std::string> Trivia::difficulties = {"Any", "Easy", "Medium", "Hard"};
 
 bool Trivia::fetchCategories() {
     const std::string reqUrl = API_BASE + API_QUESTION_CATEGORY;
@@ -56,21 +59,8 @@ bool Trivia::fetchCategories() {
     return false;
 }
 
-std::string Trivia::getCurrentCategoryName() {
-    std::string categoryName;
-
-    if(_currentCategoryId == -1) {
-        categoryName = "All";
-    }
-
-    for(auto &el: _categories["trivia_categories"]) {
-        if(el["id"].template get<int>() == _currentCategoryId) {
-            categoryName = el["name"].template get<std::string>();
-            break;
-        }
-    }
-
-    return categoryName;
+std::string Trivia::getCurrentCategoryName() const {
+    return _currentCategoryName;
 }
 
 bool Trivia::fetchCurrentCategoryInfo() {
@@ -140,7 +130,7 @@ void Trivia::setCurrentCategory(const std::string& categoryName) {
     fetchCurrentCategoryInfo();
 }
 
-void Trivia::getAllCategories(std::vector<std::string>& v) {
+void Trivia::getAllCategories(std::vector<std::string>& v) const {
     if(_categories == nullptr) {
         return;
     }
@@ -150,7 +140,7 @@ void Trivia::getAllCategories(std::vector<std::string>& v) {
     }
 }
 
-bool Trivia::getCurrentCategoryCount(std::vector<int> &v) {
+bool Trivia::getCurrentCategoryCount(std::vector<int> &v) const {
     if(_categories == nullptr || _currentCategoryInfo == nullptr || _currentCategoryId == -1) {
         return false;
     }
@@ -167,3 +157,54 @@ void Trivia::resetCurrentCategoryInfo() {
     _currentCategoryInfo.clear();
     _currentCategoryInfo = nullptr;
 }
+
+void Trivia::setCurrentDifficulty(const std::string &difficultyName) {
+    _currentDifficultyName = difficultyName;
+}
+
+std::string Trivia::getCurrentDifficultyName() const {
+    return _currentDifficultyName;
+}
+
+void Trivia::setCurrentQuestionAmount(int questionAmount) {
+    if(questionAmount < 1 || questionAmount > 50) {
+        return;
+    }
+
+    _currentQuestionAmount = questionAmount;
+}
+
+int Trivia::getCurrentQuestionAmount() const {
+    return _currentQuestionAmount;
+}
+
+void Trivia::printCurrentGameParameters() const {
+    std::cout << "Current category: " << chalk::fg::Cyan(getCurrentCategoryName());
+
+    std::vector<int> currentCategoryCount;
+    bool currentCategoryCountSuccessful = getCurrentCategoryCount(currentCategoryCount);
+
+    if(currentCategoryCountSuccessful) {
+        std::cout << " - " << \
+                    currentCategoryCount[0] << " questions " << "(" << \
+                    chalk::fg::BrightGreen(std::to_string(currentCategoryCount[1])) << "/" << \
+                    chalk::fg::BrightYellow(std::to_string(currentCategoryCount[2])) << "/" << \
+                    chalk::fg::BrightRed(std::to_string(currentCategoryCount[3])) << ")" << \
+                    std::endl;
+    } else {
+        std::cout << std::endl;
+    }
+
+    std::string difficultyName = getCurrentDifficultyName();
+    const chalk::ForegroundColor* fgc = &chalk::fg::Cyan;
+
+    if(difficultyName == "Easy") { fgc = &chalk::fg::BrightGreen;}
+    else if(difficultyName == "Medium") { fgc = &chalk::fg::BrightYellow;}
+    else if(difficultyName == "Hard") { fgc = &chalk::fg::BrightRed;}
+
+    std::cout << "Current difficulty: " << (*fgc)(difficultyName) << std::endl;
+
+    std::cout << "Amount of questions: " << chalk::fg::Cyan(std::to_string(getCurrentQuestionAmount())) << std::endl;
+}
+
+
