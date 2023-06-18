@@ -31,7 +31,22 @@ int main() {
 //            system("cls");
 
             while(true) {
-                std::cout << "Current category: " << chalk::fg::Cyan(trivia.getCurrentCategoryName()) << std::endl;
+                std::cout << "Current category: " << chalk::fg::Cyan(trivia.getCurrentCategoryName());
+
+                std::vector<int> currentCategoryCount;
+                bool currentCategoryCountSuccessful = trivia.getCurrentCategoryCount(currentCategoryCount);
+
+                if(currentCategoryCountSuccessful) {
+                    std::cout << " - " << \
+                    currentCategoryCount[0] << " questions " << "(" << \
+                    chalk::fg::BrightGreen(std::to_string(currentCategoryCount[1])) << "/" << \
+                    chalk::fg::BrightYellow(std::to_string(currentCategoryCount[2])) << "/" << \
+                    chalk::fg::BrightRed(std::to_string(currentCategoryCount[3])) << ")" << \
+                    std::endl;
+                } else {
+                    std::cout << std::endl;
+                }
+
                 std::cout << std::endl;
 
                 auto settings_inquirer = alx::Inquirer();
@@ -61,7 +76,12 @@ int main() {
                     std::string category_answer = category_inquirer.answer("category");
 
                     trivia.setCurrentCategory(category_answer);
-                    trivia.fetchCurrentCategoryInfo();
+
+                    if(category_answer != "All") {
+                        trivia.fetchCurrentCategoryInfo();
+                    } else {
+                        trivia.resetCurrentCategoryInfo();
+                    }
                 }
             }
         }

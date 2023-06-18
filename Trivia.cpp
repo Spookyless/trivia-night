@@ -113,7 +113,7 @@ bool Trivia::fetchCurrentCategoryInfo() {
             std::clog << "Response code: " << httpCode << std::endl;
             std::clog << "Response body: " << response << std::endl;
 
-            _currentCategoryCount = std::move(json::parse(response));
+            _currentCategoryInfo = std::move(json::parse(response));
 
             curl_easy_cleanup(curl);
             return true;
@@ -156,4 +156,22 @@ void Trivia::getAllCategories(std::vector<std::string>& v) {
     for(auto &el: _categories["trivia_categories"]) {
         v.push_back(el["name"].template get<std::string>());
     }
+}
+
+bool Trivia::getCurrentCategoryCount(std::vector<int> &v) {
+    if(_categories == nullptr || _currentCategoryInfo == nullptr) {
+        return false;
+    }
+
+    v.push_back(_currentCategoryInfo["category_question_count"]["total_question_count"].template get<int>());
+    v.push_back(_currentCategoryInfo["category_question_count"]["total_easy_question_count"].template get<int>());
+    v.push_back(_currentCategoryInfo["category_question_count"]["total_medium_question_count"].template get<int>());
+    v.push_back(_currentCategoryInfo["category_question_count"]["total_hard_question_count"].template get<int>());
+
+    return true;
+}
+
+void Trivia::resetCurrentCategoryInfo() {
+    _currentCategoryInfo.clear();
+    _currentCategoryInfo = nullptr;
 }

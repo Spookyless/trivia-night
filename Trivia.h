@@ -22,10 +22,12 @@ public:
     void setCurrentCategory(const std::string& categoryName);
     std::string getCurrentCategoryName();
     bool fetchCurrentCategoryInfo();
+    bool getCurrentCategoryCount(std::vector<int>& v);
+    void resetCurrentCategoryInfo();
 private:
     json _categories = nullptr;
     int _currentCategoryId = -1;
-    json _currentCategoryCount = nullptr;
+    json _currentCategoryInfo = nullptr;
 };
 
 #endif //TRIVIA_NIGHT_TRIVIA_H
