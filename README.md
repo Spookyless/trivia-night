@@ -23,7 +23,7 @@ Simple trivia application written in C++, using [Open Trivia Database](https://o
 [\[ back to top \]](#table-of-contents)
 
 ## Running the application
-It's really simple - all you have to do is to download a [prebuild binary]() (or [build your own] if you're brave enough), then execute the program.
+It's really simple - all you have to do is to download a [prebuilt binary](../../releases/latest) (or [build your own](#building-from-scratch) if you're brave enough), then execute the program.
 
 Use the `arrow keys` to move around, and `Enter` to Confirm.
 
