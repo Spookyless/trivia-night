@@ -1,0 +1,7 @@
+# Common directories
+.idea/
+cmake-build-debug/
+
+# Libraries
+curl/
+nlohmann.json/
