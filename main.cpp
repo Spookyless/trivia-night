@@ -8,8 +8,6 @@ int main() {
 
     std::cout << chalk::fmt::Bold("Hello") << std::endl;
 
-    trivia.fetchCategories();
-
 //    system("cls");
 
     std::cout << "Welcome to da game!" << std::endl;
@@ -76,12 +74,6 @@ int main() {
                     std::string category_answer = category_inquirer.answer("category");
 
                     trivia.setCurrentCategory(category_answer);
-
-                    if(category_answer != "All") {
-                        trivia.fetchCurrentCategoryInfo();
-                    } else {
-                        trivia.resetCurrentCategoryInfo();
-                    }
                 }
             }
         }

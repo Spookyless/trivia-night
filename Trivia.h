@@ -13,20 +13,23 @@ using json = nlohmann::json;
 
 class Trivia {
 public:
-    Trivia() = default;
+    Trivia();
     ~Trivia() = default;
 
-    bool fetchCategories();
     void getAllCategories(std::vector<std::string>& v);
-    void setCurrentCategory(int categoryId);
     void setCurrentCategory(const std::string& categoryName);
     std::string getCurrentCategoryName();
-    bool fetchCurrentCategoryInfo();
     bool getCurrentCategoryCount(std::vector<int>& v);
+
+private:
+    bool fetchCategories();
+    bool fetchCurrentCategoryInfo();
     void resetCurrentCategoryInfo();
+
 private:
     json _categories = nullptr;
     int _currentCategoryId = -1;
+    std::string _currentCategoryName;
     json _currentCategoryInfo = nullptr;
 };
 

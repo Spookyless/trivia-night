@@ -13,6 +13,10 @@ void prepareCurl(CURL* curl) {
     curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0);
 }
 
+Trivia::Trivia() {
+    fetchCategories();
+}
+
 bool Trivia::fetchCategories() {
     const std::string reqUrl = API_BASE + API_QUESTION_CATEGORY;
 
@@ -50,24 +54,6 @@ bool Trivia::fetchCategories() {
 
     curl_easy_cleanup(curl);
     return false;
-}
-
-void Trivia::setCurrentCategory(int categoryId) {
-    if(_categories == nullptr) {
-        return;
-    }
-
-    if(categoryId == -1) {
-        _currentCategoryId = -1;
-        return;
-    }
-
-    for(auto &el: _categories["trivia_categories"]) {
-        if(el["id"].template get<int>() == categoryId) {
-            _currentCategoryId = categoryId;
-            return;
-        }
-    }
 }
 
 std::string Trivia::getCurrentCategoryName() {
@@ -137,15 +123,21 @@ void Trivia::setCurrentCategory(const std::string& categoryName) {
 
     if(categoryName == "All") {
         _currentCategoryId = -1;
+        _currentCategoryName = "All";
+
+        resetCurrentCategoryInfo();
         return;
     }
 
     for(auto &el: _categories["trivia_categories"]) {
         if(el["name"].template get<std::string>() == categoryName) {
             _currentCategoryId = el["id"].template get<int>();
+            _currentCategoryName = categoryName;
             break;
         }
     }
+
+    fetchCurrentCategoryInfo();
 }
 
 void Trivia::getAllCategories(std::vector<std::string>& v) {
@@ -159,7 +151,7 @@ void Trivia::getAllCategories(std::vector<std::string>& v) {
 }
 
 bool Trivia::getCurrentCategoryCount(std::vector<int> &v) {
-    if(_categories == nullptr || _currentCategoryInfo == nullptr) {
+    if(_categories == nullptr || _currentCategoryInfo == nullptr || _currentCategoryId == -1) {
         return false;
     }
 
