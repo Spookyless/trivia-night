@@ -31,7 +31,7 @@ namespace OSDEP {
         system("stty cooked"); // Cooked input - reset
         system("stty echo");   // Echo on - Reset
 #else
-        c = getch();
+        c = ::getch();
 #endif
         return c;
     }
