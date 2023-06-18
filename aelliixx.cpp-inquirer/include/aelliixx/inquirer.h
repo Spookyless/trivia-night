@@ -192,7 +192,7 @@ namespace alx {
                                 position = true;
                                 erase_lines(2);
                                 printQuestion(yes);
-                            } else if (key == 78 || key == 110 || VK_RIGHT) {
+                            } else if (key == 78 || key == 110 || key == VK_RIGHT) {
                                 position = false;
                                 erase_lines(2);
                                 printQuestion(no);
